@@ -81,7 +81,9 @@ def check(root: Path) -> list[str]:
 def self_test(root: Path) -> None:
     with tempfile.TemporaryDirectory(prefix="ghostmark-repo-check-") as directory:
         fixture = Path(directory)
-        for name in REQUIRED:
+        names = set(REQUIRED)
+        names.update(str(path.relative_to(root)) for path in (root / "docs").rglob("*") if path.is_file())
+        for name in sorted(names):
             source = root / name
             destination = fixture / name
             destination.parent.mkdir(parents=True, exist_ok=True)
