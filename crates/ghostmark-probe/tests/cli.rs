@@ -1,5 +1,29 @@
 use std::process::Command;
 
+#[cfg(any(windows, target_os = "linux"))]
+#[test]
+fn output_errors_are_reported_without_panicking() {
+    for argument in ["inspect", "--help"] {
+        // A read-only handle rejects Windows writes without modifying the executable.
+        #[cfg(windows)]
+        let output = std::fs::File::open(env!("CARGO_BIN_EXE_ghostmark-probe")).unwrap();
+        // Use ENOSPC on Linux: a read-only stdout handle did not surface a write error.
+        #[cfg(target_os = "linux")]
+        let output = std::fs::File::options()
+            .write(true)
+            .open("/dev/full")
+            .unwrap();
+        let result = Command::new(env!("CARGO_BIN_EXE_ghostmark-probe"))
+            .arg(argument)
+            .stdout(output)
+            .output()
+            .unwrap();
+        assert_eq!(result.status.code(), Some(1), "{argument}: {result:?}");
+        assert!(!result.stderr.is_empty());
+        assert!(!String::from_utf8_lossy(&result.stderr).contains("panicked"));
+    }
+}
+
 #[test]
 fn inspection_is_valid_json_and_cannot_claim_a_verified_build() {
     let result = Command::new(env!("CARGO_BIN_EXE_ghostmark-probe"))
