@@ -1,0 +1,16 @@
+[package]
+name = "ghostmark-probe"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Read-only GhostMark feasibility probe; no hide or restore commands"
+publish = false
+
+[dependencies]
+ghostmark-core = { path = "../ghostmark-core" }
+serde_json.workspace = true
+
+[lints]
+workspace = true

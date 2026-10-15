@@ -1,6 +1,6 @@
 # Architecture and trust boundaries
 
-Status: planned. Only a documentation-only `ghostmark-core` crate exists.
+Status: feasibility preparation. `ghostmark-core` contains environment types, pure compatibility rules and a read-only Windows adapter; `ghostmark-probe` exposes inspection as JSON. Watermark operations and the desktop UI remain planned.
 
 ## Responsibilities
 
@@ -16,13 +16,13 @@ Future desktop UI (egui/eframe, standard-user startup)
    Approved operating-system change surface
 ```
 
-The UI renders state and submits requests; it does not own unsafe pointer operations. Core logic handles compatibility decisions and valid operation transitions. The Windows adapter owns platform calls and their invariants. The adapter's physical crate/module layout is decided when the approved method needs it, not scaffolded speculatively.
+The future UI renders state and submits requests; it will not own unsafe pointer operations. Core logic currently handles conservative compatibility decisions. The read-only Windows adapter is a module with narrowly enabled platform calls and documented buffer invariants. Operation transitions and any mutation adapter remain subject to the feasibility decision.
 
 A separate elevated helper, injected module or resident process is **not** assumed. Add one only if the M1 method requires it, and record its authentication, input validation, loading and recovery boundaries in ADR-0002. If the chosen implementation lives in another process, it must not depend on the lifetime of a UI allocation.
 
 ## Compatibility and results
 
-Read exact OS build and architecture rather than trusting a marketing version or registry rumor. Unknown, unsupported, permission denied, failed and restored must remain distinguishable. The exact engine API/state machine is an M1 deliverable; the scaffold exports no pretend functions.
+Read exact OS build and architecture rather than trusting a marketing version or registry rumor. The [probe](probe.md) distinguishes supported/unsupported/unknown and uses an empty production verification list. Unknown identity never becomes support. Permission denied, failed and restored must remain distinguishable in the future operation API; that state machine is an M1 deliverable and is not faked by the probe.
 
 An operation must validate compatibility before mutation, preserve enough original state to recover, bound the work, and return a result that reflects observed behavior. Repeated operations and unexpected Explorer/session changes need explicit semantics. Restoration may require a shell/session transition; any requirement must be proven and disclosed rather than promised away.
 

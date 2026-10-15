@@ -2,7 +2,7 @@
 
 ## Foundation checks
 
-GitHub Actions runs repository integrity/self-tests plus Rust formatting, Clippy, tests and documentation on Windows and Linux. The current Rust crate has no application logic and therefore no behavioral test cases; green CI proves scaffolding integrity only.
+GitHub Actions runs repository integrity/self-tests plus Rust formatting, Clippy, tests and documentation on Windows and Linux. Pure tests cover the probe's compatibility policy; integration tests execute its real read-only CLI and reject mutation commands. Green CI does not establish watermark hiding/restoration or VM-baseline evidence.
 
 The repository checker verifies required files, local Markdown file links, pinned Actions and consistency between the pinned compiler, manifests and lockfile. Its self-tests cover missing files, broken links, floating actions, version mismatch and the valid case. It does not fetch external links or substitute for workflow/schema validation by GitHub.
 
@@ -20,7 +20,7 @@ Keep tests tied to observable behavior, not copies of implementation details. Ev
 
 ## Required Windows protocol
 
-Record exact edition/build/architecture, locale, monitor setup, scaling, renderer/backend, commit, toolchain and clean-snapshot identifier (non-sensitive). Identify the activation watermark separately from evaluation or test-signing text.
+Follow the executable [feasibility protocol](verification/FEASIBILITY-PROTOCOL.md). Record exact edition/build/architecture, locale, monitor setup, scaling, renderer/backend, commit, toolchain and clean-snapshot identifier (non-sensitive). Identify the activation watermark separately from evaluation or test-signing text.
 
 Capture before state; inspect compatibility; apply once; verify the target notice is hidden; verify applications/desktop remain usable; restore; verify original behavior. Repeat apply/restore and exercise permission failure, unsupported build, interrupted operation, Explorer restart, lock/unlock and reboot. Add monitor changes and 100/150/200 percent DPI checks before any compatibility claim.
 

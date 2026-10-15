@@ -4,7 +4,7 @@ This document defines scope, sequence and exit gates. [Issues](https://github.co
 
 ## Product boundary
 
-The first product is a local Windows 11 x64 utility to inspect compatibility, hide the activation notice on explicitly verified builds, and restore its original behavior. It does not activate Windows or change licensing. No application has been implemented. A feasibility no-go is a valid engineering result.
+The first product is a local Windows 11 x64 utility to inspect compatibility, hide the activation notice on explicitly verified builds, and restore its original behavior. It does not activate Windows or change licensing. A read-only [probe](probe.md) is implemented as feasibility preparation; watermark operations and the desktop application are not. A feasibility no-go is a valid engineering result.
 
 Initial scope excludes automatic sign-in reapplication, services, auto-updaters, cross-platform support, plugin systems, accounts and telemetry. Add any of these only through a separate justified issue/decision.
 

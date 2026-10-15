@@ -24,11 +24,11 @@ python tools/check_repository.py --self-test
 python tools/check_repository.py
 ```
 
-There is no application to run yet. Do not expect `cargo run` or a downloadable executable. The only crate is a documentation-only core foundation. Zero Rust behavior tests at this stage is expected and does not verify the planned watermark mechanism.
+The diagnostic CLI is available with `cargo run -p ghostmark-probe -- inspect`. It writes a read-only JSON report and cannot hide or restore anything. The workspace tests exercise compatibility decisions and the real probe command; they do not verify the planned watermark mechanism. See [probe documentation](probe.md).
 
 ## Dependencies and layout
 
-The workspace uses resolver 3 and edition 2024. Commit Cargo.lock. Introduce `windows` in the read-only probe task and `egui`/`eframe` in the desktop task, with narrow required features and compatible pinned lockfile entries. Cargo is the build system; do not introduce a second build system without a demonstrated requirement.
+The workspace uses resolver 3 and edition 2024. Commit Cargo.lock. The core has a target-specific, narrowly enabled `windows` dependency for its read-only adapter. Serde models the report and serde_json serializes the CLI/fixtures. Introduce `egui`/`eframe` only in the desktop task. Cargo is the build system; do not introduce a second build system without a demonstrated requirement.
 
 Use modules in the existing crate while responsibility remains clear. Split into crates only when an actual platform or dependency boundary justifies it. The core's portable tests run on Linux and Windows; Windows adapter code will be target-gated and must get Windows CI coverage when added.
 
