@@ -14,6 +14,8 @@ Schema version 1 contains `mutation_capable: false`, the environment and an asse
 
 `RtlGetVersion` obtains the native OS version without relying on version-helper manifest compatibility. `RegGetValueW` reads only `UBR` and `EditionID` from the Windows CurrentVersion key. Other narrowly enabled Win32 APIs read architecture, locale and display/session metrics. Native buffers have fixed capacities and explicit byte sizes, and invalid/missing fields are not silently treated as trusted identity.
 
+Native architecture comes from [IsWow64Process2](https://learn.microsoft.com/en-us/windows/win32/api/wow64apiset/nf-wow64apiset-iswow64process2) using the current-process pseudo-handle; process architecture remains the Rust compilation target. `GetNativeSystemInfo` can report the emulated processor on [Windows on Arm](https://learn.microsoft.com/en-us/windows/arm/apps-on-arm-x86-emulation), so it cannot establish native x64 eligibility. Failed architecture queries emit a numeric warning and leave native architecture unknown; unrecognized machine types also remain unknown. The query requires Windows 10 version 1709 or later; the intended product target remains Windows 11 x64.
+
 The system-DPI value follows `GetDpiForSystem` and depends on process DPI awareness; it is **not** a per-monitor scaling measurement. The baseline protocol also records guest display settings manually. The probe does not determine whether it runs in a disposable VM: that must be established by the test operator/hypervisor record. A hypervisor flag would be insufficient.
 
 ## Compatibility policy
@@ -27,4 +29,4 @@ This assessment is a conservative planning guard, not a tested permission model 
 
 ## Validation
 
-Pure tests cover exact-revision/edition matching, an unverified fixture, missing/malformed identities, servers/older clients and architecture/emulation rejection. CLI integration tests execute the real read-only probe on Windows/Linux CI, validate JSON and reject system-changing commands. These tests do not prove watermark feasibility. Follow the [VM protocol](verification/FEASIBILITY-PROTOCOL.md) for that evidence.
+Pure tests cover exact-revision/edition matching, an unverified fixture, missing/malformed identities, servers/older clients and architecture/emulation rejection. A Windows adapter test maps native machine types into compatibility decisions, including an Arm64 host with an x64 process and unknown machine codes; this is synthetic evidence, not execution on Arm64 hardware. CLI integration tests execute the real read-only probe on Windows/Linux CI, validate JSON and reject system-changing commands. These tests do not prove watermark feasibility. Follow the [VM protocol](verification/FEASIBILITY-PROTOCOL.md) for that evidence.
