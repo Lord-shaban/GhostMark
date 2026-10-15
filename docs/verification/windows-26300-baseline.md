@@ -10,7 +10,7 @@ Status: INCOMPLETE. Media and VM preparation are verified; guest baseline and sn
 - Microsoft-published and locally computed SHA-256: `BD4307DF32BC8AF33B39CCECB1174AEB345386630F89A2B86C7A4E36B55EA650`.
 - VirtualBox media detection: Windows 11 Pro, image index 6, `10.0.26300.9457`, x64, en-US. This identifies the image; installed-guest identity still requires inspection.
 - Hypervisor: Oracle VirtualBox 7.2.20 r175154, Windows host, NEM/Windows Hypervisor Platform execution backend.
-- VM: 3 virtual CPUs, 4 GiB RAM, dynamically allocated 64 GiB SATA disk, EFI, Secure Boot enabled, virtual TPM 2.0, VBoxSVGA with 128 MiB video memory and 3D acceleration disabled.
+- VM: initially 2, then 3, and currently 4 virtual CPUs; 4 GiB RAM, dynamically allocated 64 GiB SATA disk, EFI, Secure Boot enabled, virtual TPM 2.0, VBoxSVGA with 128 MiB video memory and 3D acceleration disabled.
 - VM-scoped execution setting: `VBoxInternal/EM/ExitOptimizationEnabled=0`, following the [upstream maintainer's workaround](https://github.com/VirtualBox/virtualbox/issues/643). The local startup log confirms `enabled=false enabled-r0=false`; this changes a VirtualBox execution optimization, not a host or guest security setting.
 - Isolation: guest network cable disconnected, shared clipboard and drag/drop disabled, no shared host folders or USB passthrough configured. Lab storage and credentials remain outside the repository.
 - Installation uses a locally reviewed unattended template with VirtualBox's hardware-requirement bypass directives removed. Host/guest endpoint protections are not disabled. Separate VM-local setup and standard-user test accounts are prepared; effective post-install permissions remain to be checked.
@@ -26,6 +26,10 @@ Status: INCOMPLETE. Media and VM preparation are verified; guest baseline and sn
 | 3-vCPU boot | Reached the Windows 11 Setup interface; Secure Boot/TPM remained enabled |
 | Slow installation | Setup remained at 11% while disk writes advanced slowly; a VM pause/resume did not establish a fix |
 | Execution-setting change | Saved the VM state, applied the VM-scoped setting above and restored it; installation resumed and the virtual disk subsequently grew past 5 GB |
+| Later installation stalls | Image and disk activity repeatedly stalled; temporary VM pause/resume allowed progress. The installation-only monitor was stopped before baseline validation. Four vCPUs were tried from a setup checkpoint; this is not evidence of stable guest operation |
+| OOBE failure | The locally edited answer file supplied the invalid `NetworkLocation` value `Public`. Windows reported that installation could not complete. Removed the deprecated setting from the private template and generated answer; preserved the failure screenshot privately |
+| Offline answer repair | Restored the setup checkpoint, booted Microsoft's WinPE and backed up the guest's cached `Windows/Panther/unattend.xml`. Copied the corrected answer from the repair DVD; `fc.exe /b` reported no differences against the source |
+| Boot-order recovery | The installed Windows boot entry initially took precedence over the repair DVD. Saved the original UEFI order, selected the DVD temporarily, then restored and read back the original order byte-for-byte. Detached the repair medium and started the installed Windows guest; OOBE completion remains unverified |
 | Installed guest identity, activation notice and permissions | Not run |
 | Snapshot creation and restore | Not run |
 | Read-only probe in guest | Not run |
