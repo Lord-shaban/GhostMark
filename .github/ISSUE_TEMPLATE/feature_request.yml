@@ -1,0 +1,31 @@
+name: Feature request
+description: Propose a concrete outcome before adding implementation.
+title: "feat: "
+labels: ["type:feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the concrete situation and who benefits.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Smallest useful outcome
+      description: What should change? Explain why existing behavior or platform features do not solve it.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and validation
+      description: Observable criteria, supported environments, failure behavior and how to verify them.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and dependencies
+      description: Related roadmap issue or milestone, blockers, tradeoffs and explicit non-goals.

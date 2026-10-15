@@ -1,0 +1,41 @@
+name: Bug report
+description: Report incorrect behavior with a reproducible example.
+title: "bug: "
+labels: ["type:bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "There is no application release yet. Report foundation/tooling defects now; do not include product keys, device IDs, credentials or raw memory dumps. Report vulnerabilities privately through SECURITY.md."
+  - type: input
+    id: version
+    attributes:
+      label: Commit or release
+      description: Identify the source commit or release actually tested.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Exact Windows edition/build/architecture, or OS/tool versions for a repository issue. No personal identifiers.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include expected behavior and the observed result.
+    validations:
+      required: true
+  - type: textarea
+    id: recovery
+    attributes:
+      label: Impact and recovery
+      description: Did desktop behavior change? What restore/recovery steps were tried? Write not applicable for tooling defects.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Relevant error text, minimal logs or verification record. Check screenshots for private information.
