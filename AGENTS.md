@@ -1,6 +1,6 @@
 # GhostMark contributor-agent instructions
 
-Read README.md, docs/roadmap.md, docs/workflow.md and the issue before editing. This is a foundation-stage repository; no application capability is implemented. Do not convert planned features into claims of working behavior.
+Read README.md, docs/roadmap.md, docs/workflow.md and the issue before editing. This repository is preparing feasibility evidence. A read-only environment probe exists; watermark operations and the desktop application do not. Do not convert planned features into claims of working behavior.
 
 ## Ponytail approach
 

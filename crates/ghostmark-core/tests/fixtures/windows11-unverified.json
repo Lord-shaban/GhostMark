@@ -1,0 +1,12 @@
+{
+  "platform": "windows",
+  "version": { "major": 10, "minor": 0, "build": 26100, "revision": 1234, "product_type": 1 },
+  "native_architecture": "x86_64",
+  "process_architecture": "x86_64",
+  "edition": "Professional",
+  "locale": "en-US",
+  "system_dpi": 96,
+  "monitor_count": 1,
+  "remote_session": false,
+  "warnings": []
+}

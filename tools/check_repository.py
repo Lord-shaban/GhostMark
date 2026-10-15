@@ -16,11 +16,15 @@ REQUIRED = (
     ".github/ISSUE_TEMPLATE/bug_report.yml", ".github/ISSUE_TEMPLATE/feature_request.yml",
     ".github/dependabot.yml", ".github/workflows/ci.yml",
     ".github/workflows/dependency-review.yml", "crates/ghostmark-core/Cargo.toml",
-    "crates/ghostmark-core/src/lib.rs", "docs/README.ar.md", "docs/roadmap.md",
+    "crates/ghostmark-core/src/lib.rs", "crates/ghostmark-core/src/environment.rs",
+    "crates/ghostmark-core/src/windows.rs", "crates/ghostmark-core/tests/fixtures/windows11-unverified.json",
+    "crates/ghostmark-probe/Cargo.toml", "crates/ghostmark-probe/src/main.rs",
+    "crates/ghostmark-probe/tests/cli.rs", "docs/probe.md", "docs/README.ar.md", "docs/roadmap.md",
     "docs/architecture.md", "docs/development.md", "docs/workflow.md",
     "docs/testing.md", "docs/compatibility.md", "docs/releasing.md",
     "docs/adr/README.md", "docs/adr/0001-rust-stack.md",
-    "docs/verification/README.md", "docs/verification/TEMPLATE.md",
+    "docs/verification/README.md", "docs/verification/TEMPLATE.md", "docs/verification/FEASIBILITY-PROTOCOL.md",
+    "docs/research/activation-candidates.md",
 )
 LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 ACTION = re.compile(r"^\s*(?:-\s+)?uses:\s*([^\s#]+)", re.MULTILINE)

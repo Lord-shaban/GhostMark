@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/ghostmark-core"]
+members = ["crates/ghostmark-core", "crates/ghostmark-probe"]
 resolver = "3"
 
 [workspace.package]
@@ -8,6 +8,10 @@ edition = "2024"
 rust-version = "1.99"
 license = "MIT"
 repository = "https://github.com/Lord-shaban/GhostMark"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 
 [workspace.lints.rust]
 unsafe_op_in_unsafe_fn = "deny"

@@ -9,9 +9,9 @@
 
 ## Project status
 
-**Repository foundation. No working application or remover has been released.**
+**Feasibility preparation. A read-only diagnostic probe is implemented; no desktop application or remover has been released.**
 
-The next phase is an isolated Windows feasibility experiment. Hiding and restoring the activation notice must both be demonstrated on an exact Windows build before application development proceeds. An evaluation/build watermark is a separate case and is not evidence that the activation notice can be hidden.
+The next gate is an isolated Windows feasibility experiment using the [baseline protocol](docs/verification/FEASIBILITY-PROTOCOL.md). Hiding and restoring the activation notice must both be demonstrated on an exact Windows build before engine/UI development proceeds. An evaluation/build watermark is a separate case and is not evidence that the activation notice can be hidden.
 
 There is currently no download, supported-build claim, screenshot of a working product, or performance claim. See the [compatibility record](docs/compatibility.md).
 
@@ -29,13 +29,13 @@ GhostMark is intended to change visual behavior only. It does not activate Windo
 | Component | Decision |
 | --- | --- |
 | Implementation | Rust stable, edition 2024 |
-| Windows integration | Microsoft `windows` bindings, introduced during the probe phase |
+| Windows integration | Microsoft `windows` bindings, read-only environment adapter |
 | Desktop interface | `egui` / `eframe`, introduced after the engine gate |
 | Build | Cargo, Windows MSVC target |
 | Automation | GitHub Actions, SHA-pinned external actions |
 | License | MIT |
 
-Only a dependency-free core crate is scaffolded today. UI/Windows libraries are deliberately not installed before their tasks need them. See [ADR-0001](docs/adr/0001-rust-stack.md).
+The workspace contains a core inspection/policy library and a small [read-only JSON probe](docs/probe.md). UI libraries are deferred until the engine gate. No production build is marked supported. See [ADR-0001](docs/adr/0001-rust-stack.md).
 
 ## Get started
 
@@ -49,9 +49,10 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
 cargo doc --workspace --no-deps --locked
 python tools/check_repository.py
+cargo run -p ghostmark-probe -- inspect
 ```
 
-Repository checks require Python 3.11 or newer and use only the standard library. Rustup reads the pinned compiler in `rust-toolchain.toml`. The current core contains documentation only, so a passing Rust job validates the build foundation, not application functionality.
+Repository checks require Python 3.11 or newer and use only the standard library. Rustup reads the pinned compiler in `rust-toolchain.toml`. Tests exercise read-only inspection and compatibility decisions; they do not establish that watermark hiding/restoration works. The probe has no system-changing commands and does not inspect activation state or product keys.
 
 ## How work moves
 
@@ -66,7 +67,8 @@ Repository checks require Python 3.11 or newer and use only the standard library
 
 ```text
 .github/                 CI, dependency updates, ownership and issue/PR templates
-crates/ghostmark-core/   Documentation-only Rust core foundation
+crates/ghostmark-core/   Environment report, pure compatibility policy, read-only Win32 adapter
+crates/ghostmark-probe/  Diagnostic CLI; inspect only
 docs/                   Roadmap, architecture, ADRs, test and release protocols
 docs/verification/      Templates for reproducible Windows evidence
 tools/                  Repository documentation/configuration checks
