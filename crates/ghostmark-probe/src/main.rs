@@ -9,9 +9,15 @@ use std::{
 fn main() -> ExitCode {
     let arguments: Vec<_> = env::args_os().skip(1).collect();
     if arguments.len() == 1 && arguments[0] == "--help" {
-        println!(
+        if writeln!(
+            io::stdout().lock(),
             "Usage: ghostmark-probe inspect\n\nPrint a privacy-limited JSON environment report. Does not hide or restore a watermark.\nInspection success (exit 0) does not mean the environment is supported."
-        );
+        )
+        .is_err()
+        {
+            eprintln!("Could not write the help text.");
+            return ExitCode::FAILURE;
+        }
         return ExitCode::SUCCESS;
     }
     if arguments.len() != 1 || arguments[0] != "inspect" {

@@ -6,7 +6,7 @@
 cargo run -p ghostmark-probe -- inspect
 ```
 
-The only operation is `inspect`, which writes JSON to standard output. `--help` describes its scope. Unknown arguments, including `hide`, `restore` and `--apply`, fail with exit code 2. A successfully written inspection exits 0 even if compatibility is unsupported/unknown; this exit code means inspection completed, not that modification is permitted. Output failure exits 1.
+The only operation is `inspect`, which writes JSON to standard output. `--help` describes its scope. Unknown arguments, including `hide`, `restore` and `--apply`, fail with exit code 2. A successfully written inspection exits 0 even if compatibility is unsupported/unknown; this exit code means inspection completed, not that modification is permitted. Output failure, including failure to write help text, exits 1 with a diagnostic on standard error.
 
 ## Report and privacy
 
@@ -29,4 +29,4 @@ This assessment is a conservative planning guard, not a tested permission model 
 
 ## Validation
 
-Pure tests cover exact-revision/edition matching, an unverified fixture, missing/malformed identities, servers/older clients and architecture/emulation rejection. A Windows adapter test maps native machine types into compatibility decisions, including an Arm64 host with an x64 process and unknown machine codes; this is synthetic evidence, not execution on Arm64 hardware. CLI integration tests execute the real read-only probe on Windows/Linux CI, validate JSON and reject system-changing commands. These tests do not prove watermark feasibility. Follow the [VM protocol](verification/FEASIBILITY-PROTOCOL.md) for that evidence.
+Pure tests cover exact-revision/edition matching, an unverified fixture, missing/malformed identities, servers/older clients and architecture/emulation rejection. A Windows adapter test maps native machine types into compatibility decisions, including an Arm64 host with an x64 process and unknown machine codes; this is synthetic evidence, not execution on Arm64 hardware. CLI integration tests execute the real read-only probe on Windows/Linux CI, validate JSON, reject system-changing commands and verify controlled failure when output cannot be written. These tests do not prove watermark feasibility. Follow the [VM protocol](verification/FEASIBILITY-PROTOCOL.md) for that evidence.

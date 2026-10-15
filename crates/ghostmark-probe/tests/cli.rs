@@ -1,4 +1,19 @@
-use std::process::Command;
+use std::{fs::File, process::Command};
+
+#[test]
+fn output_errors_are_reported_without_panicking() {
+    for argument in ["inspect", "--help"] {
+        let result = Command::new(env!("CARGO_BIN_EXE_ghostmark-probe"))
+            .arg(argument)
+            // A read-only handle rejects writes without modifying the executable.
+            .stdout(File::open(env!("CARGO_BIN_EXE_ghostmark-probe")).unwrap())
+            .output()
+            .unwrap();
+        assert_eq!(result.status.code(), Some(1), "{argument}: {result:?}");
+        assert!(!result.stderr.is_empty());
+        assert!(!String::from_utf8_lossy(&result.stderr).contains("panicked"));
+    }
+}
 
 #[test]
 fn inspection_is_valid_json_and_cannot_claim_a_verified_build() {
