@@ -4,7 +4,7 @@ Status: INCOMPLETE. Media, guest tooling, standard-user read-only inspection and
 
 ## Source and isolation
 
-- Date: 2026-10-15; observation timestamps use UTC.
+- Initial baseline: 2026-10-15; continued on 2026-10-16 Africa/Cairo (2026-10-15 UTC). Observation timestamps use UTC.
 - Source: Microsoft's [Windows 11 download page](https://www.microsoft.com/en-us/software-download/windows11), English x64 installation media, supplied by the operator.
 - ISO size: 9,047,330,816 bytes.
 - Microsoft-published and locally computed SHA-256: `BD4307DF32BC8AF33B39CCECB1174AEB345386630F89A2B86C7A4E36B55EA650`.
@@ -31,7 +31,7 @@ Status: INCOMPLETE. Media, guest tooling, standard-user read-only inspection and
 | Offline answer repair | Restored the setup checkpoint, booted Microsoft's WinPE and backed up the guest's cached `Windows/Panther/unattend.xml`. Copied the corrected answer from the repair DVD; `fc.exe /b` reported no differences against the source |
 | Boot-order recovery | The installed Windows boot entry initially took precedence over the repair DVD. Saved the original UEFI order, selected the DVD temporarily, then restored and read back the original order byte-for-byte. Detached the repair medium; Windows subsequently reached its first desktop |
 | Installed guest identity and permissions | Pass for guest-control inspection: Windows Professional 10.0.26300.9457, x64, en-US; standard-user medium-integrity token without Administrators membership. Interactive Settings confirmation remains pending |
-| Activation notice and display settings | Pending: guest was at its lock screen during this continuation; no desktop-notice conclusion is drawn from that screen |
+| Activation notice and display settings | Pending: the earlier continuation reached the lock screen; the later observation below confirms an unlocked session, but does not establish the desktop notice or Settings values |
 | Snapshot creation and restore | Pass: clean guest shutdown confirmed as `poweroff`; detached setup media and created `baseline-before-ghostmark` at 14:11:24 UTC. Restored while powered off at 14:14:29 UTC; post-restore marker, artifact, token and probe checks passed at 14:16:45 UTC |
 | Read-only probe in guest | Pass: artifact hash matched; `inspect` exited 0, reported no warnings and correctly returned `unsupported / build_not_verified` |
 | Watermark hiding/restoration | Not run |
@@ -87,6 +87,12 @@ Both cold boots required time for Guest Additions to become ready; early executi
 
 ## Remaining observations
 
-Follow [FEASIBILITY-PROTOCOL.md](FEASIBILITY-PROTOCOL.md) to confirm edition/build in guest Settings, record display resolution/scaling and monitor layout, inspect broad Activation Settings state, and observe the actual desktop-notice type with a sanitized screenshot. The guest was at its lock screen; operator unlock is required before these UI observations. A lock screen does not establish whether the activation notice is present or absent. No activation state or system clock is changed to produce a target.
+At 21:39:19 UTC on 2026-10-15, a hypervisor framebuffer capture showed an unlocked guest session with Edge covering the desktop. The capture is retained privately as `baseline-continuation-20261016.png`. Its framebuffer size of 1024 × 768 is not a Settings-confirmed resolution or scaling measurement. A subsequent standard-user guest-control `inspect` completed successfully; its report matched `baseline-probe-after.json` exactly, including no warnings and `unsupported / build_not_verified`. The new raw report is retained as `baseline-probe-continuation-20261016.json`.
+
+A separate PowerShell token/artifact recheck exceeded its 45-second guest-process limit and ended with `VERR_TIMEOUT`; it produced no new verification result. The earlier passing token/hash evidence above remains the last completed check. No pause/resume, security change or watermark operation was used to work around this failure.
+
+The host UI-control helper returned an unrelated host-browser image when asked to capture the selected VirtualBox window, including after activation and a refreshed window inventory. No input was sent through that mismatched capture. This is a lab-control limitation, not evidence about the guest desktop or watermark behavior.
+
+Follow [FEASIBILITY-PROTOCOL.md](FEASIBILITY-PROTOCOL.md) to confirm edition/build in guest Settings, record display resolution/scaling and monitor layout, inspect broad Activation Settings state, and observe the actual desktop-notice type with a sanitized screenshot. These interactive observations remain pending; an application covering the desktop does not establish whether the activation notice is present or absent. No activation state or system clock is changed to produce a target.
 
 No watermark mutation has been attempted on either the guest or the host. No build is authorized by this preparation record.
