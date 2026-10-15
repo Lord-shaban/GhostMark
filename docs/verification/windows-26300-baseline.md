@@ -1,6 +1,6 @@
 # Windows 11 Pro 26300.9457 baseline
 
-Status: INCOMPLETE. Media and VM preparation are verified; guest baseline and snapshot recovery are not yet recorded. This is not hide/restore evidence or a supported-build claim.
+Status: INCOMPLETE. Media, guest tooling, standard-user read-only inspection and powered-off snapshot recovery are verified. Interactive display/activation observations remain incomplete. This is not hide/restore evidence or a supported-build claim.
 
 ## Source and isolation
 
@@ -13,8 +13,8 @@ Status: INCOMPLETE. Media and VM preparation are verified; guest baseline and sn
 - VM: initially 2, then 3, and currently 4 virtual CPUs; 4 GiB RAM, dynamically allocated 64 GiB SATA disk, EFI, Secure Boot enabled, virtual TPM 2.0, VBoxSVGA with 128 MiB video memory and 3D acceleration disabled.
 - VM-scoped execution setting: `VBoxInternal/EM/ExitOptimizationEnabled=0`, following the [upstream maintainer's workaround](https://github.com/VirtualBox/virtualbox/issues/643). The local startup log confirms `enabled=false enabled-r0=false`; this changes a VirtualBox execution optimization, not a host or guest security setting.
 - Isolation: guest network cable disconnected, shared clipboard and drag/drop disabled, no shared host folders or USB passthrough configured. Lab storage and credentials remain outside the repository.
-- Installation uses a locally reviewed unattended template with VirtualBox's hardware-requirement bypass directives removed. Host/guest endpoint protections are not disabled. Separate VM-local setup and standard-user test accounts are prepared; effective post-install permissions remain to be checked.
-- Matching Guest Additions 7.2.20 are included for controlled guest execution/file transfer and display verification. Installation success remains to be checked; they are lab tooling, not a GhostMark runtime dependency.
+- Installation uses a locally reviewed unattended template with VirtualBox's hardware-requirement bypass directives removed. Host/guest endpoint protections are not disabled. Separate VM-local setup and standard-user test accounts are present; the test token has medium integrity and no Administrators membership.
+- Matching Guest Additions 7.2.20 r175154 are running for controlled guest execution/file transfer and display verification. They are lab tooling, not a GhostMark runtime dependency.
 
 ## Provisioning observations
 
@@ -29,16 +29,64 @@ Status: INCOMPLETE. Media and VM preparation are verified; guest baseline and sn
 | Later installation stalls | Image and disk activity repeatedly stalled; temporary VM pause/resume allowed progress. The installation-only monitor was stopped before baseline validation. Four vCPUs were tried from a setup checkpoint; this is not evidence of stable guest operation |
 | OOBE failure | The locally edited answer file supplied the invalid `NetworkLocation` value `Public`. Windows reported that installation could not complete. Removed the deprecated setting from the private template and generated answer; preserved the failure screenshot privately |
 | Offline answer repair | Restored the setup checkpoint, booted Microsoft's WinPE and backed up the guest's cached `Windows/Panther/unattend.xml`. Copied the corrected answer from the repair DVD; `fc.exe /b` reported no differences against the source |
-| Boot-order recovery | The installed Windows boot entry initially took precedence over the repair DVD. Saved the original UEFI order, selected the DVD temporarily, then restored and read back the original order byte-for-byte. Detached the repair medium and started the installed Windows guest; OOBE completion remains unverified |
-| Installed guest identity, activation notice and permissions | Not run |
-| Snapshot creation and restore | Not run |
-| Read-only probe in guest | Not run |
+| Boot-order recovery | The installed Windows boot entry initially took precedence over the repair DVD. Saved the original UEFI order, selected the DVD temporarily, then restored and read back the original order byte-for-byte. Detached the repair medium; Windows subsequently reached its first desktop |
+| Installed guest identity and permissions | Pass for guest-control inspection: Windows Professional 10.0.26300.9457, x64, en-US; standard-user medium-integrity token without Administrators membership. Interactive Settings confirmation remains pending |
+| Activation notice and display settings | Pending: guest was at its lock screen during this continuation; no desktop-notice conclusion is drawn from that screen |
+| Snapshot creation and restore | Pass: clean guest shutdown confirmed as `poweroff`; detached setup media and created `baseline-before-ghostmark` at 14:11:24 UTC. Restored while powered off at 14:14:29 UTC; post-restore marker, artifact, token and probe checks passed at 14:16:45 UTC |
+| Read-only probe in guest | Pass: artifact hash matched; `inspect` exited 0, reported no warnings and correctly returned `unsupported / build_not_verified` |
 | Watermark hiding/restoration | Not run |
 
 The firmware symptoms match the upstream [VirtualBox 2-vCPU/WHPX report](https://github.com/VirtualBox/virtualbox/issues/799). The CPU-count workaround was observed locally; this does not establish a universal cause or fix. A successful `startvm` command alone does not establish successful firmware or Windows boot.
 
-## Pending baseline
+## Read-only guest evidence
 
-Follow [FEASIBILITY-PROTOCOL.md](FEASIBILITY-PROTOCOL.md) to record the installed build/edition, locale, display/scaling, effective token, broad activation state and actual notice type. Record a powered-off snapshot, prove its restoration, and repeat read-only inspection. No activation state or system clock is changed to produce a target.
+The private lab artifact was built from source commit `975cf515b3678af84df039bad49c88ef37971c2e`, using Rust 1.99.0 with `-C target-feature=+crt-static`. Its guest-verified SHA-256 is `E238BDCFAC3CF443D2E870B8CD9746AFB77F982579B2C0E4FB29561D7D2543AD`. This is an unpublished diagnostic artifact, not a release.
+
+At 14:07:48 UTC, the guest-control account's effective Administrator check and Administrators-membership check were both false. A separate `whoami /groups` observation confirmed medium integrity. The controller runs these processes in Session 0; this evidence does not substitute for inspection in the interactive desktop session.
+
+Repeated guest inspection returned this sanitized report:
+
+```json
+{
+  "schema_version": 1,
+  "mutation_capable": false,
+  "environment": {
+    "platform": "windows",
+    "version": {
+      "major": 10,
+      "minor": 0,
+      "build": 26300,
+      "revision": 9457,
+      "product_type": 1
+    },
+    "native_architecture": "x86_64",
+    "process_architecture": "x86_64",
+    "edition": "Professional",
+    "locale": "en-US",
+    "system_dpi": 96,
+    "monitor_count": 1,
+    "remote_session": false,
+    "warnings": []
+  },
+  "compatibility": {
+    "status": "unsupported",
+    "reason": "build_not_verified"
+  }
+}
+```
+
+The DPI value is the calling process's system-DPI context, not a verified display-scaling setting. Guest-control and PowerShell startup previously timed out; a later run completed, including first-use module preparation. This is not proof that the earlier VM stalls are resolved.
+
+Raw evidence remains in the private lab directory outside the repository, alongside media/setup/VM evidence. It includes `verified-baseline-before.txt`, `baseline-probe-before.json`, `baseline-probe-after.json`, `token-before.txt`, `token-after.txt`, `artifact-hash-after.txt` and the private screenshots. The sanitized report above is the public evidence; no account names, device identifiers or credentials are included.
+
+## Snapshot recovery evidence
+
+After creating the powered-off snapshot, booted the guest and created an inert marker file in its lab directory; reading it back confirmed the marker existed at 14:13:42 UTC. Shut down Windows normally, confirmed `poweroff`, restored `baseline-before-ghostmark`, confirmed that it restored to `poweroff`, and booted again. At 14:16:45 UTC, checks confirmed that the marker was absent, the probe's artifact hash still matched, the before/after JSON reports were equal, and the test token still had medium integrity without Administrators membership. The marker's disappearance demonstrates rollback of guest disk state, rather than merely successful snapshot-command execution.
+
+Both cold boots required time for Guest Additions to become ready; early execution requests were rejected, including a bounded 45-second readiness wait after restoration. Later verification succeeded without pause/resume or security changes. The private `rollback-marker-before.txt`, `rollback-marker-after.txt`, `snapshot-restore.json` and `snapshot-verification.json` retain the recovery observations. Snapshot identifiers remain private. This proves lab rollback, not restoration of a watermark mechanism.
+
+## Remaining observations
+
+Follow [FEASIBILITY-PROTOCOL.md](FEASIBILITY-PROTOCOL.md) to confirm edition/build in guest Settings, record display resolution/scaling and monitor layout, inspect broad Activation Settings state, and observe the actual desktop-notice type with a sanitized screenshot. The guest was at its lock screen; operator unlock is required before these UI observations. A lock screen does not establish whether the activation notice is present or absent. No activation state or system clock is changed to produce a target.
 
 No watermark mutation has been attempted on either the guest or the host. No build is authorized by this preparation record.
